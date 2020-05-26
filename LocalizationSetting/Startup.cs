@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -32,8 +33,22 @@ namespace LocalizationSetting
             {
                 o.ResourcesPath = "Resources";
             });
+            //services.Configure<RequestLocalizationOptions>(options =>
+            //{
+            //    var supportedCultures = new List<CultureInfo>
+            //        {
+            //            new CultureInfo("en-US"),
+            //            new CultureInfo("fr")
+            //        };
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            //    options.DefaultRequestCulture = new RequestCulture("en-US");
+            //    options.SupportedCultures = supportedCultures;
+            //    options.SupportedUICultures = supportedCultures;
+            //});
+            services.AddMvc()
+                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+                 .AddDataAnnotationsLocalization()
+                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +69,14 @@ namespace LocalizationSetting
                 new CultureInfo("zh-CN"),
             };
             //默认语言
+            /*
+             *CookieRequestCultureProvider(cookie)
+             *QueryStringRequestCultureProvider(Query)
+             */
+            app.UseStaticFiles();
+
+            app.UseCookiePolicy();
+            app.UseAuthentication();
             app.UseRequestLocalization(new RequestLocalizationOptions
             {
                 DefaultRequestCulture = new RequestCulture("zh-CN"),
